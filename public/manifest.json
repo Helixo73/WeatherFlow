@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "WeatherFlow",
+  "short_name": "WeatherFlow",
+  "description": "WeatherFlow : prévisions météo et cartes interactives.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E6F4FE",
+  "theme_color": "#208AEF",
+  "categories": ["weather"],
+  "icons": [
+    { "src": "/pwa-64x64.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "/pwa-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/maskable-icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

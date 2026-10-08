@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "WeatherFlow",
+    "slug": "WeatherFlow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "weatherflow",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "fr.hexacode.WeatherFlow"
+    },
+    "android": {
+      "package": "fr.hexacode.weatherflow",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#208AEF",
+          "image": "./assets/images/icon.png",
+          "imageWidth": 200
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
