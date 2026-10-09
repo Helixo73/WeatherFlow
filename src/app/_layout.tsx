@@ -2,19 +2,14 @@ import { Stack } from "expo-router";
 import { useFonts } from 'expo-font';
 import { ActivityIndicator, View } from 'react-native';
 import { globalStyles } from "@/constants/styles";
-import {
-  Poppins_400Regular,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-  Poppins_900Black,
-} from '@expo-google-fonts/poppins';
+
 export default function RootLayout() {
 
   const [fontsLoaded] = useFonts({
-    Poppins: Poppins_400Regular,
-    PoppinsSemiBold: Poppins_600SemiBold,
-    PoppinsBold: Poppins_700Bold,
-    PoppinsBlack: Poppins_900Black,
+    Poppins: require('../../assets/fonts/Poppins_400Regular.ttf'),
+    PoppinsSemiBold: require('../../assets/fonts/Poppins_600SemiBold.ttf'),
+    PoppinsBold: require('../../assets/fonts/Poppins_700Bold.ttf'),
+    PoppinsBlack: require('../../assets/fonts/Poppins_900Black.ttf'),
   });
 
   if(!fontsLoaded) {
