@@ -1,9 +1,10 @@
 import CityCard from '@/components/CityCard'
 import { APICall } from '@/composables/API'
 import { globalStyles } from '@/constants/styles'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
+import { ChevronLeft } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 export default function SearchPage() {
 
   type City = {
@@ -18,7 +19,7 @@ export default function SearchPage() {
 
   const [searchedText, setSearchedText] = useState("")
   const [results, setResults] = useState<City[]>([])
-
+  const router = useRouter()
   const searchCity = async () => {
     const response = await APICall.searchCity(searchedText)
     setResults(response?.results ?? []);
@@ -31,6 +32,17 @@ export default function SearchPage() {
     <Stack.Screen 
       options={{
         title: 'Rechercher',
+        headerLeft: () => (
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={20}
+            style={{
+              margin: 15
+            }}
+          >
+            <ChevronLeft color='white' />
+          </Pressable>
+        ),
       }}
     />
     <View

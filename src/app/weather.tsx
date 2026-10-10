@@ -1,4 +1,4 @@
-import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { APICall } from '@/composables/API';
 import { globalStyles } from '@/constants/styles';
@@ -7,7 +7,7 @@ import { WeatherCard } from '@/components/WeatherCard';
 import { HourlyCard } from '@/components/HourlyCard';
 import { DailyCard } from '@/components/DailyCard';
 import { addItem, getItems, Item, removeItem } from '@/constants/storage';
-import { Star } from 'lucide-react-native';
+import { ChevronLeft, Star } from 'lucide-react-native';
 
 type Props = {
     latitude: string,
@@ -100,7 +100,7 @@ export default function WeatherPage() {
         weather_code: daily.weather_code[index],
       }))
     }
-
+    const router = useRouter()
     const getCurrentWeather = async () => {
       const response = await APICall.getCurrentWeather(lat, long)
       setCurrentWeather(response?.current)
@@ -139,7 +139,18 @@ export default function WeatherPage() {
               >
                 <Star fill={isFavourite ? 'white' : 'none'} color='white' />
               </Pressable>
-            )
+            ),
+            headerLeft: () => (
+              <Pressable
+                onPress={() => router.back()}
+                hitSlop={20}
+                style={{
+                  margin: 15
+                }}
+              >
+                <ChevronLeft color='white' />
+              </Pressable>
+            ),
           }}
         />
         <View

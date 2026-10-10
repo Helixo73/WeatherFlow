@@ -1,7 +1,8 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useFonts } from 'expo-font';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { globalStyles } from "@/constants/styles";
+import { ChevronLeft } from "lucide-react-native";
 
 export default function RootLayout() {
 
@@ -11,6 +12,7 @@ export default function RootLayout() {
     PoppinsBold: require('../../assets/fonts/Poppins_700Bold.ttf'),
     PoppinsBlack: require('../../assets/fonts/Poppins_900Black.ttf'),
   });
+  const router = useRouter()
 
   if(!fontsLoaded) {
     return <View style={[
@@ -27,6 +29,7 @@ export default function RootLayout() {
         headerStyle: {
           backgroundColor: '#00aeff',
         },
+        
         headerTitleStyle: {
           fontFamily: 'PoppinsBlack',
           fontSize: 24,
