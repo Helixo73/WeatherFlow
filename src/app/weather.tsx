@@ -1,13 +1,13 @@
-import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { APICall } from '@/composables/API';
-import { globalStyles } from '@/constants/styles';
-import { View, StyleSheet, ActivityIndicator, Text, ScrollView, Pressable } from 'react-native';
-import { WeatherCard } from '@/components/WeatherCard';
-import { HourlyCard } from '@/components/HourlyCard';
 import { DailyCard } from '@/components/DailyCard';
+import { HourlyCard } from '@/components/HourlyCard';
+import { WeatherCard } from '@/components/WeatherCard';
+import { APICall } from '@/composables/API';
 import { addItem, getItems, Item, removeItem } from '@/constants/storage';
+import { globalStyles } from '@/constants/styles';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Star } from 'lucide-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 type Props = {
     latitude: string,

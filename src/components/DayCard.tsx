@@ -15,6 +15,9 @@ export function DayCard({time, temperature_2m_max, temperature_2m_min, weather_c
     const updatedTime = formatDateRelative(time)
     const iconName = getWeatherIcon(weather_code, 1)
     const IconComponent = iconName ? icons[iconName] : icons.ShieldQuestionMark
+    const newTemperatureMin = Math.round(temperature_2m_min)
+    const newTemperatureMax = Math.round(temperature_2m_max)
+
     return <>
         <View
             style={{
@@ -33,8 +36,8 @@ export function DayCard({time, temperature_2m_max, temperature_2m_min, weather_c
                     gap: 10,
                 }}
             >
-                <Text style={styles.title}>{temperature_2m_min}°C</Text>
-                <Text style={styles.title}>{temperature_2m_max}°C</Text>
+                <Text style={styles.title}>{newTemperatureMin}°C</Text>
+                <Text style={styles.title}>{newTemperatureMax}°C</Text>
                 <IconComponent size={32} color='white' />
             </View>
         </View>

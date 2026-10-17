@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet } from "react-native";
-import { getWeatherIcon, icons, getWeatherKeyword } from '../composables/InterpretWeatherCode'
 import { globalStyles } from "@/constants/styles";
+import { StyleSheet, Text, View } from "react-native";
+import { getWeatherIcon, icons } from '../composables/InterpretWeatherCode';
+
 
 type Props = {
     time: string,
@@ -14,6 +15,7 @@ export function HourCard({ time, weather_code, is_day, temperature_2m }: Props) 
     const iconName = getWeatherIcon(weather_code, is_day)
     const IconComponent = iconName ? icons[iconName] : icons.ShieldQuestionMark
     const formatTime = formatHeureFr(time)
+    const newTemperature = Math.round(temperature_2m)
 
     return (
         <View style={[
@@ -21,7 +23,7 @@ export function HourCard({ time, weather_code, is_day, temperature_2m }: Props) 
             styles.card
         ]}>
             <IconComponent size={32} color="white" />
-            <Text style={styles.title}>{temperature_2m}°</Text>
+            <Text style={styles.title}>{newTemperature}°C</Text>
             <Text style={styles.title}>{formatTime}</Text>
         </View>
     )

@@ -1,6 +1,7 @@
 import { View, StyleSheet, Text } from "react-native"
 import { DayCard } from "./DayCard";
 
+
 type DailyWeatherEntry = {
   time: string,
   temperature_2m_max: number,

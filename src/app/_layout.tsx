@@ -2,7 +2,6 @@ import { Stack, useRouter } from "expo-router";
 import { useFonts } from 'expo-font';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { globalStyles } from "@/constants/styles";
-import { ChevronLeft } from "lucide-react-native";
 
 export default function RootLayout() {
 

@@ -13,6 +13,14 @@ type Props = {
 }
 
 export function HourlyCard({ hourlyWeather }: Props) {
+    
+    const now = new Date()
+    now.setMinutes(0, 0, 0)
+
+    const upcomingHours = hourlyWeather.filter(
+        (entry) => new Date(entry.time) >= now
+    )
+
     return (
         <View style={styles.card}>
             <ScrollView
@@ -20,7 +28,7 @@ export function HourlyCard({ hourlyWeather }: Props) {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ padding: 16, gap: 12 }}
             >
-                {hourlyWeather.map((entry) => (
+                {upcomingHours.map((entry) => (
                     <HourCard
                         key={entry.time}
                         time={entry.time}
