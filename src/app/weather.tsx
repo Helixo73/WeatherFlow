@@ -1,6 +1,7 @@
 import { DailyCard } from '@/components/DailyCard';
 import { HourlyCard } from '@/components/HourlyCard';
 import { WeatherCard } from '@/components/WeatherCard';
+import { WindCard } from '@/components/WindCard';
 import { APICall } from '@/composables/API';
 import { addItem, getItems, Item, removeItem } from '@/constants/storage';
 import { globalStyles } from '@/constants/styles';
@@ -10,12 +11,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 type Props = {
-    latitude: string,
-    longitude: string,
-    name: string,
-    country: string,
-    region: string,
-    district: string
+  latitude: string,
+  longitude: string,
+  name: string,
+  country: string,
+  region: string,
+  district: string
 }
 type CurrentWeatherInfo = {
   time: string,
@@ -51,143 +52,184 @@ type DailyWeatherEntry = {
   weather_code: number,
 }
 type DailyWeatherInfo = DailyWeatherEntry[]
-
-
+type WindInfos = {
+  time: string,
+  interval: number,
+  wind_speed_10m: number,
+  wind_direction_10m: number,
+  wind_gusts_10m: number,
+}
 
 export default function WeatherPage() {
-    const { latitude, longitude, name, country, region, district } = useLocalSearchParams<Props>()
-    const lat = Number(latitude)
-    const long = Number(longitude)
-    const id = `${lat},${long}`
-    const [currentWeather, setCurrentWeather] = useState<CurrentWeatherInfo>()
-    const [hourlyWeather, setHourlyWeather] = useState<HourlyWeatherInfo>()
-    const [dailyWeather, setDailyWeather] = useState<DailyWeatherInfo>()
-    const [isLoadingWeather, setIsLoadingWeather] = useState(true)
-    const [items, setItems] = useState<Item[]>([])
-    const [isFavourite, setIsFavourite] = useState(false)
+  const { latitude, longitude, name, country, region, district } = useLocalSearchParams<Props>()
+  const lat = Number(latitude)
+  const long = Number(longitude)
+  const id = `${lat},${long}`
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeatherInfo>()
+  const [hourlyWeather, setHourlyWeather] = useState<HourlyWeatherInfo>()
+  const [dailyWeather, setDailyWeather] = useState<DailyWeatherInfo>()
+  const [windInfos, setWindInfos] = useState<WindInfos>()
+  const [isLoadingWeather, setIsLoadingWeather] = useState(true)
+  const [items, setItems] = useState<Item[]>([])
+  const [isFavourite, setIsFavourite] = useState(false)
+  const [isCoastale, setIsCoastale] = useState<boolean>(false)
 
-    useEffect(() => {
-      getList()
-    }, [])
+  useEffect(() => {
+    getList()
+  }, [])
 
-    useEffect(() => {
-      setIsFavourite(isInList)
-    }, [items])
+  useEffect(() => {
+    setIsFavourite(isInList)
+  }, [items])
 
+  const getList = () => {
+    getItems().then(setItems)
+  }
+  const isInList = items.some((item) => item.id === id)
+  const handleChange = async () => {
+    setIsFavourite(!isFavourite)
+    if (!isFavourite) await addItem({ name, lat, long, country, district, region, id })
+    else await removeItem(id)
+  }
 
-    const getList = () => {
-      getItems().then(setItems)
-    }
-    const isInList = items.some((item) => item.id === id)
-    const handleChange = async () => {
-      setIsFavourite(!isFavourite)
-      if(!isFavourite) await addItem({name, lat, long, country, district, region, id})
-      else await removeItem(id)
-    }
-    const transformHourlyWeather = (hourly: HourlyWeatherRaw): HourlyWeatherInfo => {
-      return hourly.time.map((time, index) => ({
-        time,
-        temperature_2m: hourly.temperature_2m[index],
-        weather_code: hourly.weather_code[index],
-        is_day: hourly.is_day[index],
-      }))
-    }
-    const transformDailyWeather = (daily: DailyWeatherRaw): DailyWeatherInfo => {
-      return daily.time.map((time, index) => ({
-        time,
-        temperature_2m_max: daily.temperature_2m_max[index],
-        temperature_2m_min: daily.temperature_2m_min[index],
-        weather_code: daily.weather_code[index],
-      }))
-    }
-    const router = useRouter()
-    const getCurrentWeather = async () => {
-      const response = await APICall.getCurrentWeather(lat, long)
-      setCurrentWeather(response?.current)
-    }
-    const getHourlyWeather = async () => {
-      const response = await APICall.getHourlyWeather(lat, long)
-      setHourlyWeather(transformHourlyWeather(response?.hourly))
-    }
-    const getdailyWeather = async () => {
-      const response = await APICall.getDailyWeather(lat, long)
-      setDailyWeather(transformDailyWeather(response?.daily))
-    }
+  const transformHourlyWeather = (hourly: HourlyWeatherRaw): HourlyWeatherInfo => {
+    return hourly.time.map((time, index) => ({
+      time,
+      temperature_2m: hourly.temperature_2m[index],
+      weather_code: hourly.weather_code[index],
+      is_day: hourly.is_day[index],
+    }))
+  }
+  const transformDailyWeather = (daily: DailyWeatherRaw): DailyWeatherInfo => {
+    return daily.time.map((time, index) => ({
+      time,
+      temperature_2m_max: daily.temperature_2m_max[index],
+      temperature_2m_min: daily.temperature_2m_min[index],
+      weather_code: daily.weather_code[index],
+    }))
+  }
 
-    useFocusEffect(
-      useCallback(() => {
-        const fetchAll = async () => {
-          setIsLoadingWeather(true)
-          await Promise.all([getCurrentWeather(), getHourlyWeather(), getdailyWeather()])
+  const router = useRouter()
+
+  const getCurrentWeather = async () => {
+    const response = await APICall.getCurrentWeather(lat, long)
+    setCurrentWeather(response?.current)
+  }
+
+  const getHourlyWeather = async () => {
+    const response = await APICall.getHourlyWeather(lat, long)
+    setHourlyWeather(transformHourlyWeather(response?.hourly))
+  }
+
+  const getDailyWeather = async () => {
+    const response = await APICall.getDailyWeather(lat, long)
+    setDailyWeather(transformDailyWeather(response?.daily))
+  }
+
+  const getWindInfos = async () => {
+    const coastal = await APICall.isCoastale(lat, long, 15000)
+    console.log('coastal:', coastal)
+    setIsCoastale(coastal)
+    if (coastal) {
+      const wind = await APICall.getWindInfo(lat, long)
+      console.log('wind:', wind)
+      setWindInfos(wind)
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAll = async () => {
+        setIsLoadingWeather(true)
+        try {
+          await Promise.all([
+            getCurrentWeather(),
+            getHourlyWeather(),
+            getDailyWeather(),
+            getWindInfos(),
+          ])
+        } catch (e) {
+          console.log('Erreur chargement météo :', e)
+        } finally {
           setIsLoadingWeather(false)
         }
-        fetchAll()
-      }, []),
-    )
+      }
+      fetchAll()
+    }, [lat, long]),
+  )
 
-    return <>
-        <Stack.Screen
-          options={{
-            title: name,
-            headerRight: () => (
-              <Pressable
-                onPress={() => handleChange()}
-                hitSlop={20}
-                style={{
-                  margin: 15
-                }}
-              >
-                <Star fill={isFavourite ? 'white' : 'none'} color='white' />
-              </Pressable>
-            ),
-            headerLeft: () => (
-              <Pressable
-                onPress={() => router.back()}
-                hitSlop={20}
-                style={{
-                  margin: 15
-                }}
-              >
-                <ChevronLeft color='white' />
-              </Pressable>
-            ),
-          }}
-        />
-        <View
-          style={[
-            globalStyles.screen,
-            styles.screen,
-          ]}
-        >
-          <ScrollView
-            contentContainerStyle={[
-              globalStyles.centerColumn,
-              styles.contrainer,
-            ]}
+  return <>
+    <Stack.Screen
+      options={{
+        title: name,
+        headerRight: () => (
+          <Pressable
+            onPress={() => handleChange()}
+            hitSlop={20}
+            style={{
+              margin: 15
+            }}
           >
-            {isLoadingWeather ? (
-              <View style={styles.loaderContainer}>
-                <ActivityIndicator size="large" color="#ffffff" style={{ transform: [{ scale: 3 }] }} />
-              </View>
-            ) : (
-              <>
-                {currentWeather && (
-                  <WeatherCard
-                    weather_code={currentWeather.weather_code}
-                    is_day={currentWeather.is_day}
-                  />
-                )}
-                {hourlyWeather && (
-                  <HourlyCard hourlyWeather={hourlyWeather} />
-                )}
-                {dailyWeather && (
-                  <DailyCard dailyWeather={dailyWeather} />
-                )}
-              </>
+            <Star fill={isFavourite ? 'white' : 'none'} color='white' />
+          </Pressable>
+        ),
+        headerLeft: () => (
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={20}
+            style={{
+              margin: 15
+            }}
+          >
+            <ChevronLeft color='white' />
+          </Pressable>
+        ),
+      }}
+    />
+    <View
+      style={[
+        globalStyles.screen,
+        styles.screen,
+      ]}
+    >
+      <ScrollView
+        contentContainerStyle={[
+          globalStyles.centerColumn,
+          styles.contrainer,
+        ]}
+      >
+        {isLoadingWeather ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#ffffff" style={{ transform: [{ scale: 3 }] }} />
+          </View>
+        ) : (
+          <>
+            {currentWeather && (
+              <WeatherCard
+                weather_code={currentWeather.weather_code}
+                is_day={currentWeather.is_day}
+              />
             )}
-          </ScrollView>
-        </View>
-    </>
+            {hourlyWeather && (
+              <HourlyCard hourlyWeather={hourlyWeather} />
+            )}
+            {dailyWeather && (
+              <DailyCard dailyWeather={dailyWeather} />
+            )}
+            {isCoastale && windInfos && (
+              <WindCard
+                time={windInfos.time}
+                interval={windInfos.interval}
+                wind_speed_10m={windInfos.wind_speed_10m}
+                wind_direction_10m={windInfos.wind_direction_10m}
+                wind_gusts_10m={windInfos.wind_gusts_10m}
+              />
+            )}
+          </>
+        )}
+      </ScrollView>
+    </View>
+  </>
 }
 
 const styles = StyleSheet.create({
